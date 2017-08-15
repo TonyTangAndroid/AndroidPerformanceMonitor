@@ -5,9 +5,13 @@ BlockCanary是一个Android平台的一个非侵入式的性能监控组件，�
 
 取名为BlockCanary则是为了向LeakCanary致敬，顺便本库的UI部分是从LeakCanary改来的，之后可能会做一些调整。
 
+- 1.5.0 Context 中增加 Debug 时不监控选项。
+- 1.4.1 Bug修复
+- 1.4.0 修复 1.3.x 的 bug，增加发生卡慢时的拦截方法。
 - 1.3.0 增加白名单和包名过滤功能
 
 # 包介绍
+
 - blockcanary-android  blockcanary类的一些实现
 - blockcanary-analyzer 记录block信息的核心实现
 - blockcanary-no-op    空包，为了release打包时不编译进去
@@ -20,11 +24,11 @@ BlockCanary是一个Android平台的一个非侵入式的性能监控组件，�
 
 ```gradle
 dependencies {
-    compile 'com.github.markzhai:blockcanary-android:1.3.1'
+    compile 'com.github.markzhai:blockcanary-android:1.5.0'
 
     // 仅在debug包启用BlockCanary进行卡顿监控和提示的话，可以这么用
-    debugCompile 'com.github.markzhai:blockcanary-android:1.3.1'
-    releaseCompile 'com.github.markzhai:blockcanary-no-op:1.3.1'
+    debugCompile 'com.github.markzhai:blockcanary-android:1.5.0'
+    releaseCompile 'com.github.markzhai:blockcanary-no-op:1.5.0'
 }
 ```
 
@@ -36,7 +40,6 @@ PS: 由于该库使用了 `getMainLooper().setMessageLogging()`, 请确认是否
 public class DemoApplication extends Application {
     @Override
     public void onCreate() {
-        ...
         // 在主进程初始化调用哈
         BlockCanary.install(this, new AppBlockCanaryContext()).start();
     }
@@ -186,6 +189,13 @@ public class AppBlockCanaryContext extends BlockCanaryContext {
     public boolean deleteFilesInWhiteList() {
         return true;
     }
+
+    /**
+     * Block interceptor, developer may provide their own actions.
+     */
+    public void onBlock(Context context, BlockInfo blockInfo) {
+
+    }
 }
 ```
 
@@ -207,7 +217,7 @@ public class AppBlockCanaryContext extends BlockCanaryContext {
 - 首先可以根据手机性能，如核数、机型、内存来判断对应耗时是不是应该判定为卡顿。如一些差的机器，或者内存本身不足的时候。
 - 根据CPU情况，是否是app拿不到cpu，被其他应用拿走了。
 - 看timecost和threadtimecost，如果两者差得很多，则是主线程被等待或者资源被抢占。
-- 看卡顿发生前最近的几次堆栈，如果堆栈相同，则可以判定为是改出发生卡顿，否则需要比较分析。
+- 看卡顿发生前最近的几次堆栈，如果堆栈相同，则可以判定为是该处发生卡顿，否则需要比较分析。
 
 # Demo工程
 **请参考本项目下的demo module，点击三个按钮会触发对应的耗时事件，消息栏则会弹出block的notification，点击可以进去查看详细信息。**  

@@ -17,8 +17,10 @@ package com.github.moduth.blockcanary.ui;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -250,9 +252,21 @@ public class DisplayActivity extends Activity {
             mActionButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    LogWriter.deleteAll();
-                    mBlockInfoEntries = Collections.emptyList();
-                    updateUi();
+                    DialogInterface.OnClickListener okListener = new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            LogWriter.deleteAll();
+                            mBlockInfoEntries = Collections.emptyList();
+                            updateUi();
+                        }
+                    };
+                    new AlertDialog.Builder(DisplayActivity.this)
+                            .setTitle(getString(R.string.block_canary_delete))
+                            .setMessage(getString(R.string.block_canary_delete_all_dialog_content))
+                            .setPositiveButton(getString(R.string.block_canary_yes), okListener)
+                            .setNegativeButton(getString(R.string.block_canary_no), null)
+                            .show();
+
                 }
             });
         }
@@ -282,18 +296,18 @@ public class DisplayActivity extends Activity {
             }
             mActionButton.setVisibility(VISIBLE);
             mActionButton.setText(R.string.block_canary_delete);
-            mActionButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (blockInfo != null) {
-                        blockInfo.logFile.delete();
-                        mBlockStartTime = null;
-                        mBlockInfoEntries.remove(blockInfo);
-                        updateUi();
-                    }
-                }
-            });
         }
+        mActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (blockInfo != null) {
+                    blockInfo.logFile.delete();
+                    mBlockStartTime = null;
+                    mBlockInfoEntries.remove(blockInfo);
+                    updateUi();
+                }
+            }
+        });
         adapter.update(blockInfo);
         setTitle(getString(R.string.block_canary_class_has_blocked, blockInfo.timeCost));
     }

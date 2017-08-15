@@ -41,10 +41,12 @@ public final class BlockCanary {
     private BlockCanary() {
         BlockCanaryInternals.setContext(BlockCanaryContext.get());
         mBlockCanaryCore = BlockCanaryInternals.getInstance();
+        mBlockCanaryCore.addBlockInterceptor(BlockCanaryContext.get());
         if (!BlockCanaryContext.get().displayNotification()) {
             return;
         }
-        mBlockCanaryCore.setOnBlockInterceptor(new DisplayService());
+        mBlockCanaryCore.addBlockInterceptor(new DisplayService());
+
     }
 
     /**

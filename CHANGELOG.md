@@ -1,8 +1,21 @@
 # Change Log
 
-You can watch releases [on Maven](https://oss.sonatype.org/content/groups/public/com/github/moduth/).
+You can watch releases [on Maven](https://oss.sonatype.org/content/groups/public/com/github/markzhai/).
 
-## Version 1.3
+## Version 1.5 *(2017-02-26)*
+
+Debug mode stop monitor.
+
+## Version 1.4 *(2016-11-02)*
+
+- Bug fix.
+- Add onBlock interceptor.
+
+### 1.4.1 (2017-01-19)
+
+- Bug fix
+
+## Version 1.3 *(2016-08-24)*
 
 - Code refactor.
 - Support white-list and concern packages.
